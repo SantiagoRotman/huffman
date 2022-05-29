@@ -30,14 +30,13 @@ Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *lette
         buff->letter = ' ';
         buff->weight = 0;
         (*treeIndex)++;
-        buff->left = joinTrees(readTree(encodedTree, treeIndex, enterPosition, letterIndex), buff);
+        buff->left = readTree(encodedTree, treeIndex, enterPosition, letterIndex);
         (*treeIndex)++;
-        buff->right = joinTrees(readTree(encodedTree, treeIndex, enterPosition, letterIndex), buff);
+        buff->right = readTree(encodedTree, treeIndex, enterPosition, letterIndex);
     }
     else{
         buff = malloc(sizeof(Btree));
         (*letterIndex)++;
-        printf("____%c____", encodedTree[(*letterIndex) + enterPosition]);
         buff->letter = encodedTree[(*letterIndex) + enterPosition];
         buff->weight = 0;
         buff->left = NULL;
@@ -47,14 +46,9 @@ Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *lette
 }
 
 char buildText(Btree *tree, char *encodedFileText, int *index) {
-    if (tree->left == NULL && tree->right == NULL){
-        printf("->%c", tree->letter);
-        return tree->letter;
-    }
-
+    if (tree->left == NULL && tree->right == NULL) return tree->letter;
 
     (*index)++; 
-    printf("%c", encodedFileText[(*index)-1]);
     if(encodedFileText[(*index)-1] == '0') buildText(tree->left , encodedFileText, index);
     else  buildText(tree->right, encodedFileText, index);
 
@@ -68,7 +62,7 @@ int decompresor(char * encodedTextPath, char * encodedTreePath) {
 
 
     char *encodedTree = readfile(encodedTreePath, &encodedTreeLen);
-    printf("%s\n", encodedTree);
+    
 
     for (int i = 0; i < encodedTreeLen; i++) {
         if (encodedTree[i] == '\n') {
@@ -76,22 +70,18 @@ int decompresor(char * encodedTextPath, char * encodedTreePath) {
             break;
         }
     }
-    printf("-------------->%d\n", enterPosition);
+
     int treeIndex = 0, letterPosition = 0;
 
-    printf("-1-\n");
     Btree *tree = readTree(encodedTree, &treeIndex, enterPosition, &letterPosition);
-    printf("-2-\n");
 
 
-    char *decodedText = malloc(sizeof(char));
-    decodedText[0]='\0';
-    int textIndex = 0, textSize = 0;
-    printf("-3-\n");
-    printf("%s\n", encodedFileText);
-    while(textIndex <= 250){
-        char aux = buildText(tree, encodedFileText, &textIndex);
-        printf("\n->%c<-", aux);
+    char *decodedText = malloc(sizeof(char)*1024);
+    int textIndex = 0, textSize = 1;
+    printf("\n\n\n\n");
+    for(int i = 0;textIndex < nlen; i++){
+        if(i >= textSize * 1024)  decodedText = realloc(decodedText, (textSize++)* 1024);
+        decodedText[i] = buildText(tree, encodedFileText, &textIndex);
     }
 
     printf("%s\n", decodedText);
