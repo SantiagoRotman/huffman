@@ -274,24 +274,28 @@ void achicatte(char * path){
     printf("->%s\n", letters );
 
     int nlen = 0;
-    char *nTree = NULL;
-    nTree = implode(encodedTree, lenTree , &nlen);
+    char *nTree = malloc(sizeof(char)*(lenTree + 1));
+    strcpy(nTree, encodedTree);
+    //nTree = implode(encodedTree, lenTree , &nlen);
     
-    nTree = realloc(nTree, sizeof(char)*(nlen + 1));
-    nTree[nlen] = '\0';
-    nTree = realloc(nTree, (sizeof(char)*(nlen + lenLetters + 2)));
+    nTree = realloc(nTree, sizeof(char)*(lenTree + 1));
+    nTree[lenTree] = '\0';
+    nTree = realloc(nTree, (sizeof(char)*(lenTree + lenLetters + 2)));
     
     strcat(nTree, "\n");
     strcat(nTree, letters);
 
     char * encodedText = encodeText(A, fileText, len);
+    printf("%s", encodedText);
+    encodedText = implode(encodedText, strlen(encodedText) , &nlen);
+    encodedText[nlen]='\0';
 
     for(int i = 0; i< 256; i++){
         if(A[i]!=NULL) free(A[i]);
     }
 
 
-    printf("%s", encodedText);
+    //printf("%s", encodedText);
     char hfPath[100];
     strcat(strcpy(hfPath, path), ".hf");
     char treePath[100]; 
