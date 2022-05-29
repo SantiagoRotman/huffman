@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "compresor.c"
-#include "decompressor.c"
+#include "compresor.h"
+#include "io.h"
+#include "decompressor.h"
 
 int main(int argc, char **argv){
 

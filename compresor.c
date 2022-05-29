@@ -1,58 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "io.c"
-#define MAX_LETTERS 256
-
-typedef struct tuple {
-  char data;
-  int index;
-} Tuple;
-
-typedef struct Tnode {
-    char letter;
-    int weight;
-    struct Tnode *left, *right;
-} Btree;
-
-typedef struct node {
-    Btree * tree;
-    struct node *sig;
-} TreeList;
-
-
-
-
-Tuple * createTuple() {
-    Tuple *A = malloc(sizeof(Tuple)*MAX_LETTERS);
-    for(int i = 0; i < MAX_LETTERS; i++) {
-        A[i].data = (char)i;
-        A[i].index = 0; 
-    }
-    return A;
-}
-
-void printTuples(Tuple *A) {
-    for(int i = 0; i < MAX_LETTERS; i++) {
-        printf("%c-", A[i].data);
-        printf("%d", A[i].index);  
-        printf("\n");
-    }
-}
-
-void printTreeList(TreeList *A) {
-    TreeList *aux = A;
-    for(;aux != NULL; aux=aux->sig) {
-        printf("%c-", aux->tree->letter);
-        printf("%d", aux->tree->weight);
-        printf("\n");
-    }
-}
-void destroyBtree(Btree * tree) {
-    if(tree->left != NULL)  destroyBtree(tree->left);
-    if(tree->right != NULL) destroyBtree(tree->right);
-    free(tree);
-}
+#include "io.h"
+#include "resources.h"
 
 void computeFrequency (Tuple *A, char *text, int len) {
     for(int i = 0; i < len; i++) {
@@ -75,14 +25,6 @@ void sortTuples(Tuple *A, int len) {
     }
 }
 
-Btree *createTreeNode (char c, int i) {
-    Btree *node = malloc(sizeof(Btree));
-    node->letter = c;
-    node->weight = i;
-    node->left = NULL;
-    node->right = NULL;
-    return node;
-}
 
 TreeList * addInOrder(TreeList *list, Btree * node) {
     TreeList *new = malloc(sizeof(TreeList));

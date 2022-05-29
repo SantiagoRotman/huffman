@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "compresor.c"
+#include "resources.h"
+#include "io.h"
 
 // typedef struct Tnode {
 //     char letter;
