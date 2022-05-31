@@ -4,26 +4,6 @@
 #include "resources.h"
 #include "io.h"
 
-// typedef struct Tnode {
-//     char letter;
-//     int weight;
-//     struct Tnode *left, *right;
-// } Btree;
-
-// typedef struct node {
-//     Btree * tree;
-//     struct node *sig;
-// } TreeList;
-
-// Btree *joinTrees(Btree *left, Btree *right) {
-//     Btree *new = malloc(sizeof(Btree));
-//     new->letter = ' ';
-//     new->weight = left->weight + right->weight;
-//     new->left = left;
-//     new->right = right;
-//     return new;
-// }
-
 Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *letterIndex) {
     Btree *buff = NULL;
     if (encodedTree[*treeIndex] == '0') {
@@ -55,16 +35,14 @@ char buildText(Btree *tree, char *encodedFileText, int *index) {
 
 }
 
-int decompresor(char * encodedTextPath, char * encodedTreePath) {
+int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPath) {
     int encodedTextLen = 0, encodedTreeLen = 0, enterPosition = 0, nlen = 0;
 
     char *encodedFileText = readfile(encodedTextPath, &encodedTextLen);
     encodedFileText = explode(encodedFileText, encodedTextLen ,&nlen);
 
-
     char *encodedTree = readfile(encodedTreePath, &encodedTreeLen);
     
-
     for (int i = 0; i < encodedTreeLen; i++) {
         if (encodedTree[i] == '\n') {
             enterPosition = i;
@@ -78,14 +56,19 @@ int decompresor(char * encodedTextPath, char * encodedTreePath) {
 
 
     char *decodedText = malloc(sizeof(char)*1024);
-    int textIndex = 0, textSize = 1;
-    printf("\n\n\n\n");
-    for(int i = 0;textIndex < nlen; i++){
-        if(i >= textSize * 1024)  decodedText = realloc(decodedText, (textSize++)* 1024);
+    int textIndex = 0, textSize = 1, i=0;
+
+    for(i = 0;textIndex < nlen; i++){
+        if(i >= textSize * 1024){  
+            textSize++;
+            decodedText = realloc(decodedText, textSize* 1024);
+        }
         decodedText[i] = buildText(tree, encodedFileText, &textIndex);
     }
 
-    printf("%s\n", decodedText);
+    decodedText = realloc(decodedText, sizeof(char)*(textSize+1)*1024);
+    decodedText[i] = '\0';
+    writefile(outputPath, decodedText, strlen(decodedText));
 
     return 0;
 }

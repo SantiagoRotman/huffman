@@ -6,6 +6,6 @@ Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *lette
 
 char buildText(Btree *tree, char *encodedFileText, int *index) ;
 
-int decompresor(char * encodedTextPath, char * encodedTreePath) ;
+int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPath) ;
 
 #endif

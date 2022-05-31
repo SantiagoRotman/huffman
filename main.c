@@ -16,7 +16,9 @@ int main(int argc, char **argv){
         strcat(strcpy(hfPath, argv[2]), ".hf");
         char treePath[100]; 
         strcat(strcpy(treePath, argv[2]), ".tree");
-        decompresor(hfPath, treePath);
+        char decPath[100]; 
+        strcat(strcpy(decPath, argv[2]), ".dec");
+        decompresor(hfPath, treePath, decPath);
     }
 
 

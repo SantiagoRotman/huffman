@@ -88,7 +88,7 @@ Btree * createHuffmanTree(TreeList *treeList) {
 
 void printBtree(Btree *tree) {
     if(tree->left != NULL)  printBtree(tree->left);
-    printf("%c - %d\n", tree->letter, tree->weight);
+    //printf("%c - %d\n", tree->letter, tree->weight);
     if(tree->right != NULL) printBtree(tree->right);
     // if (tree->right == NULL && tree->left == NULL)  printf("%c - %d", tree->letter, tree->weight);
 }
@@ -130,43 +130,37 @@ void getLettersCode(Btree *tree, char *code, char *table[], int len) {
 }
 
 char *encodeText(char *table[], char *text, int len) {
-    int j = 0, ban = 2;
+    int j = 0, ban = 2, index = 0;
     char *output = NULL;
     output = realloc(output, (sizeof(char)*1024));
     output[0] = '\0';
     for(int i = 0; i < len ; i++ ){
         char c = text[i];
-        if(strlen(table[(unsigned char)c])+j >= 1024){
+        int lenCode = strlen(table[(unsigned char)c]);
+        if(lenCode+j >= 1024){
             ban++;
             output = realloc(output, (sizeof(char)*ban*1024));
             j = 0;
         }
-        j = j + strlen(table[(unsigned char)c]);
-        //printf("%s-----%s\n", output, table[(unsigned char)c]);
-        strcat(output, table[(unsigned char)c]);
-
+        j = j + lenCode;
+        
+        strcpy(output + index, table[(unsigned char)c]);
+        index = index + lenCode;
     }
     return output;
 }
 
 
 void encodeTree(Btree *tree, char *encodedTree, char *letters, int *lenTree, int *lenLetters){
-    // encodedTree[(*lenTree)] = '\0';
-     //letters[(*lenLetters)] = '\0';
-   // printf("encodedtree: %s - %d letters: %s - %d ||%p | %p | %p||\n\n\n", encodedTree, *lenTree, letters, *lenLetters, tree, tree->left, tree->right);
     if (tree->right == NULL && tree->left == NULL) {
-        //encodedTree = realloc(encodedTree, sizeof(char)*((*lenTree)+1));
-        //letters = realloc(letters, sizeof(char)*((*lenLetters)+1));
         encodedTree[(*lenTree)] = '1';
         letters[(*lenLetters)] = tree->letter;
         (*lenLetters)++;
         (*lenTree)++;
     }
     else{
-        //encodedTree = realloc(encodedTree, sizeof(char)*((*lenTree)+1));
         encodedTree[(*lenTree)] = '0';
         (*lenTree)++;
-        //encodedTree[(*lenTree)] = '\0';
     }
 
     if(tree->left != NULL)  encodeTree(tree->left, encodedTree, letters, lenTree, lenLetters );
@@ -179,46 +173,37 @@ void achicatte(char * path){
     int len = 0;
     char *fileText = readfile(path, &len);
     fileText[len] = '\0';
-    printf("%s\n", fileText);
 
     Tuple *letterFrequency = createTuple();
     computeFrequency(letterFrequency, fileText, len);
-    printf("-2");
 
 
     TreeList *treeList =  NULL;
     sortTuples(letterFrequency, 256);
     treeList = filterZero(letterFrequency);
-    printf("-1");
-
 
     Btree *tree = createHuffmanTree(treeList);
-    printf("0");
 
     char * A[256];
     for(int i = 0; i < 256; i++) A[i]=NULL;
 
     char code[300] = "";
     getLettersCode(tree, code, (char **)A, 0);
-    printf("1");
 
     char encodedTree[1000]="", letters[256]="";
     int lenTree = 0, lenLetters = 0;
     encodeTree(tree, encodedTree, letters, &lenTree, &lenLetters);
-    printf("2");
 
     destroyBtree(tree);
-    printf("3");
 
     encodedTree[lenTree] = '\0';
     letters[lenLetters] = '\0';
-    printf("->%s\n", encodedTree );
-    printf("->%s\n", letters );
+    //printf("->%s\n", encodedTree );
+    //printf("->%s\n", letters );
 
     int nlen = 0;
     char *nTree = malloc(sizeof(char)*(lenTree + 1));
     strcpy(nTree, encodedTree);
-    //nTree = implode(encodedTree, lenTree , &nlen);
     
     nTree = realloc(nTree, sizeof(char)*(lenTree + 1));
     nTree[lenTree] = '\0';
@@ -228,7 +213,7 @@ void achicatte(char * path){
     strcat(nTree, letters);
 
     char * encodedText = encodeText(A, fileText, len);
-    printf("%s", encodedText);
+
     encodedText = implode(encodedText, strlen(encodedText) , &nlen);
     encodedText[nlen]='\0';
 
