@@ -27,19 +27,21 @@ Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *lette
 }
 
 char buildText(Btree *tree, char *encodedFileText, int *index) {
-    if (tree->left == NULL && tree->right == NULL) return tree->letter;
-
-    (*index)++; 
-    if(encodedFileText[(*index)-1] == '0') buildText(tree->left , encodedFileText, index);
-    else  buildText(tree->right, encodedFileText, index);
-
+    if(tree->left == NULL && tree->right == NULL && (*index)==0)
+        (*index)++;
+    for(;tree->left != NULL && tree->right != NULL; (*index)++) {
+        if(encodedFileText[(*index)] == '0') tree = tree->left;
+        else tree = tree->right;
+    }
+    return tree->letter;
 }
 
 int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPath) {
     int encodedTextLen = 0, encodedTreeLen = 0, enterPosition = 0, nlen = 0;
 
-    char *encodedFileText = readfile(encodedTextPath, &encodedTextLen);
-    encodedFileText = explode(encodedFileText, encodedTextLen ,&nlen);
+    char * encodedFileText2 = readfile(encodedTextPath, &encodedTextLen);
+    char * encodedFileText = explode(encodedFileText2, encodedTextLen ,&nlen);
+    free(encodedFileText2);
 
     char *encodedTree = readfile(encodedTreePath, &encodedTreeLen);
     
@@ -53,7 +55,7 @@ int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPat
     int treeIndex = 0, letterPosition = 0;
 
     Btree *tree = readTree(encodedTree, &treeIndex, enterPosition, &letterPosition);
-
+    free(encodedTree);
 
     char *decodedText = malloc(sizeof(char)*1024);
     int textIndex = 0, textSize = 1, i=0;
@@ -65,10 +67,13 @@ int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPat
         }
         decodedText[i] = buildText(tree, encodedFileText, &textIndex);
     }
+    free(encodedFileText);
 
-    decodedText = realloc(decodedText, sizeof(char)*(textSize+1)*1024);
-    decodedText[i] = '\0';
-    writefile(outputPath, decodedText, strlen(decodedText));
+    destroyBtree(tree);
+
+    writefile(outputPath, decodedText, i);
+
+    free(decodedText);
 
     return 0;
 }

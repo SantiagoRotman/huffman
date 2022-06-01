@@ -11,20 +11,44 @@ Tuple * createTuple() {
     return A;
 }
 
-void printTuples(Tuple *A) {
-    for(int i = 0; i < MAX_LETTERS; i++) {
-        printf("%c-", A[i].data);
-        printf("%d", A[i].index);  
-        printf("\n");
+void printTuples(Tuple *A,  int toFile) {
+    if(toFile){
+        FILE * f=  fopen("exit", "w");
+        for(int i = 0; i < MAX_LETTERS; i++) {
+            fprintf(f,"%c-", A[i].data);
+            fprintf(f,"%d", A[i].index);  
+            fprintf(f,"\n");
+        }
+        fclose(f);
+    }
+
+    else { 
+        for(int i = 0; i < MAX_LETTERS; i++) {
+            printf("%c-", A[i].data);
+            printf("%d", A[i].index);  
+            printf("\n");
+        }
     }
 }
 
-void printTreeList(TreeList *A) {
+void printTreeList(TreeList *A,  int toFile) {
     TreeList *aux = A;
-    for(;aux != NULL; aux=aux->sig) {
-        printf("%c-", aux->tree->letter);
-        printf("%d", aux->tree->weight);
-        printf("\n");
+    if(toFile){
+        FILE * f=  fopen("exit2", "w");
+        for(;aux != NULL; aux=aux->sig) {
+            fprintf(f,"%c-", aux->tree->letter);
+            fprintf(f,"%d", aux->tree->weight);
+            fprintf(f,"\n");
+
+        }
+        fclose(f);
+    }
+    else{
+        for(;aux != NULL; aux=aux->sig) {
+            printf("%c-", aux->tree->letter);
+            printf("%d", aux->tree->weight);
+            printf("\n");
+        }
     }
 }
 void destroyBtree(Btree * tree) {

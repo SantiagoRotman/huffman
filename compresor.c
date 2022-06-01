@@ -34,13 +34,13 @@ TreeList * addInOrder(TreeList *list, Btree * node) {
         return new;
     }
     
-    TreeList *aux = list;
     if(list->tree->weight >= node->weight) {
         new->tree = node;
         new->sig = list;
         return new;
     }
 
+    TreeList *aux = list;
     for (; aux->sig != NULL && aux->sig->tree->weight < node->weight ; aux = aux->sig);
     new->tree = node;
     new->sig = aux->sig;
@@ -60,13 +60,14 @@ Btree *joinTrees(Btree *left, Btree *right) {
 TreeList * filterZero(Tuple *A) { //pensar el nombre pq no solo filtta los 0 sino que crea la TreeList
     int i = 0;
     TreeList *list = NULL;
-    for (i = 0; i < 256 && A[i].index != 0; i++) {
+    for (i = 0; i < MAX_LETTERS && A[i].index != 0; i++) {
         if (A[i].index != 0) {
             Btree *node = createTreeNode(A[i].data, A[i].index);
             list = addInOrder(list, node);
         }
     }
-    free(A);
+
+    //printTreeList(list, 1);
     return list;
 }
 
@@ -123,9 +124,16 @@ void getLettersCode(Btree *tree, char *code, char *table[], int len) {
         getLettersCode(tree->right, code, table, len+1);
     }
     if (tree->right == NULL && tree->left == NULL) {
-        code[(len)] = '\0';
-        table[(unsigned char)tree->letter] = malloc(sizeof(char)*strlen(code)+1);
-        strcpy(table[(unsigned char)tree->letter], code);
+        if(len == 0){
+            table[(unsigned char)tree->letter] = malloc(sizeof(char)+1);
+            strcpy(table[(unsigned char)tree->letter], "1");
+        }
+        else{
+            code[(len)] = '\0';
+            table[(unsigned char)tree->letter] = malloc(sizeof(char)*strlen(code)+1);
+            strcpy(table[(unsigned char)tree->letter], code);
+        }
+        
     }
 }
 
@@ -147,6 +155,7 @@ char *encodeText(char *table[], char *text, int len) {
         strcpy(output + index, table[(unsigned char)c]);
         index = index + lenCode;
     }
+    output[index]= '\0';
     return output;
 }
 
@@ -169,66 +178,68 @@ void encodeTree(Btree *tree, char *encodedTree, char *letters, int *lenTree, int
 
 
 void achicatte(char * path){
-
     int len = 0;
     char *fileText = readfile(path, &len);
-    fileText[len] = '\0';
 
     Tuple *letterFrequency = createTuple();
     computeFrequency(letterFrequency, fileText, len);
-
+    
 
     TreeList *treeList =  NULL;
     sortTuples(letterFrequency, 256);
     treeList = filterZero(letterFrequency);
-
+    //printTuples(letterFrequency, 0);
+    
     Btree *tree = createHuffmanTree(treeList);
+    free(letterFrequency);
+    //free(treeList);
 
     char * A[256];
     for(int i = 0; i < 256; i++) A[i]=NULL;
-
+    printf("dddddddddddddddddd\n");
     char code[300] = "";
     getLettersCode(tree, code, (char **)A, 0);
-
-    char encodedTree[1000]="", letters[256]="";
+    //for(int i = 0; i <= MAX_LETTERS; i++) if (A[i]!= NULL) printf("%s\n", A[i]);
+    printf("ccccccccccccccc\n");
+    char encodedTree[10000]="", letters[257]="";
     int lenTree = 0, lenLetters = 0;
     encodeTree(tree, encodedTree, letters, &lenTree, &lenLetters);
 
     destroyBtree(tree);
-
+    printf("bbbbbbbbbbbbbb\n");
     encodedTree[lenTree] = '\0';
-    letters[lenLetters] = '\0';
-    //printf("->%s\n", encodedTree );
-    //printf("->%s\n", letters );
 
-    int nlen = 0;
-    char *nTree = malloc(sizeof(char)*(lenTree + 1));
+    printf("aaaaaaaaaa\n");
+    int nTreeLen = lenTree + lenLetters+1, nlen = 0;
+    char *nTree = malloc(sizeof(char)*(lenTree + lenLetters + 3));
     strcpy(nTree, encodedTree);
-    
-    nTree = realloc(nTree, sizeof(char)*(lenTree + 1));
-    nTree[lenTree] = '\0';
-    nTree = realloc(nTree, (sizeof(char)*(lenTree + lenLetters + 2)));
-    
-    strcat(nTree, "\n");
-    strcat(nTree, letters);
-
-    char * encodedText = encodeText(A, fileText, len);
-
-    encodedText = implode(encodedText, strlen(encodedText) , &nlen);
-    encodedText[nlen]='\0';
+    nTree[lenTree] = '\n';
+    //strncpy(nTree+lenTree+1, letters, lenLetters);
+    for(int i = 0; i < lenLetters; i++) nTree[lenTree+1+i] = letters[i];
+    nTree[lenTree + lenLetters + 2]  = '\0';
+    printf("1\n");
+    char * encodedText2 = encodeText(A, fileText, len);
+    printf("2\n");
+    printf("%s -- %d\n",encodedText2, strlen(encodedText2));
+    char * encodedText = implode(encodedText2, strlen(encodedText2) , &nlen);
+    printf("3\n");
+    free(encodedText2);
+    printf("4\n");
 
     for(int i = 0; i< 256; i++){
-        if(A[i]!=NULL) free(A[i]);
+        if(A[i]!=NULL) {
+            printf("%s\n", A[i]);
+            free(A[i]);
+        }
     }
+    printf("5\n");
 
-
-    //printf("%s", encodedText);
     char hfPath[100];
     strcat(strcpy(hfPath, path), ".hf");
     char treePath[100]; 
     strcat(strcpy(treePath, path), ".tree");
-    writefile(hfPath, encodedText, strlen(encodedText));
-    writefile(treePath, nTree, strlen(nTree));
+    writefile(hfPath, encodedText, nlen);
+    writefile(treePath, nTree, nTreeLen);
     free(nTree);
     free(fileText);
     free(encodedText);

@@ -5,6 +5,9 @@
 #include "io.h"
 #include "decompressor.h"
 
+#include <time.h>
+
+
 int main(int argc, char **argv){
 
     if(!strcmp(argv[1], "C") && argv[2] != NULL){
@@ -21,5 +24,13 @@ int main(int argc, char **argv){
         decompresor(hfPath, treePath, decPath);
     }
 
+    if(!strcmp(argv[1], "crear") && argv[2] != NULL){
+        FILE * f=  fopen("AllInOne", "w");
+        srand((unsigned) time(NULL));
+        for(int i = 0; i < 10000; i++){
+            fputc((char) (rand()%256) , f);
+        }
+        fclose(f);
+    }
 
 }
