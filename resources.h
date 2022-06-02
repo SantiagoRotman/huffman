@@ -59,6 +59,12 @@ void printTreeList(TreeList *A,  int toFile) ;
 void destroyBtree(Btree * tree);
 
 /*
+  printBtree: Btree* -> void
+  Lee un Btree* y lo imprime por pantalla (preorden).
+*/
+void printBtree(Btree *tree);
+
+/*
   createTreeNode: char int -> Btree*
   Devuelve un Btree* que tiene como datos el char y el int pasados
   en los parametros.

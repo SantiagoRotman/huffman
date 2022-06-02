@@ -26,6 +26,8 @@ void sortTuples(Tuple *A, int len) ;
 */
 TreeList * addInOrder(TreeList *list, Btree * node) ;
 
+
+
 /*
     joinTrees: Btree* Btree* -> Btree
 
@@ -35,12 +37,12 @@ TreeList * addInOrder(TreeList *list, Btree * node) ;
 Btree *joinTrees(Btree *left, Btree *right) ;
 
 /*
-    filterZero: Tuple* -> TreeList
+    createFilteredTreeList: Tuple* -> TreeList
 
     A partir de un array de Tuples crea una TreeList con los las tuplas
     que tengan frecuencia mayor a 0.
 */
-TreeList * filterZero(Tuple *A) ;
+TreeList * createFilteredTreeList(Tuple *A) ;
 
 /*
     createHuffmanTree: TreeList* -> Btree*
@@ -49,7 +51,6 @@ TreeList * filterZero(Tuple *A) ;
 */
 Btree * createHuffmanTree(TreeList *treeList) ;
 
-void printBtree(Btree *tree);
 
 /*
     getLettersCode: Btree* char* table* [] len -> void

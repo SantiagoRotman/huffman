@@ -6,7 +6,7 @@ Tuple * createTuple() {
     Tuple *A = malloc(sizeof(Tuple)*MAX_LETTERS);
     for(int i = 0; i < MAX_LETTERS; i++) {
         A[i].data = (char)i;
-        A[i].index = 0; 
+        A[i].index = 0;
     }
     return A;
 }
@@ -16,16 +16,16 @@ void printTuples(Tuple *A,  int toFile) {
         FILE * f=  fopen("exit", "w");
         for(int i = 0; i < MAX_LETTERS; i++) {
             fprintf(f,"%c-", A[i].data);
-            fprintf(f,"%d", A[i].index);  
+            fprintf(f,"%d", A[i].index);
             fprintf(f,"\n");
         }
         fclose(f);
     }
 
-    else { 
+    else {
         for(int i = 0; i < MAX_LETTERS; i++) {
             printf("%c-", A[i].data);
-            printf("%d", A[i].index);  
+            printf("%d", A[i].index);
             printf("\n");
         }
     }
@@ -51,6 +51,14 @@ void printTreeList(TreeList *A,  int toFile) {
         }
     }
 }
+
+void printBtree(Btree *tree) {
+    if(tree->left != NULL)  printBtree(tree->left);
+    //printf("%c - %d\n", tree->letter, tree->weight);
+    if(tree->right != NULL) printBtree(tree->right);
+    // if (tree->right == NULL && tree->left == NULL)  printf("%c - %d", tree->letter, tree->weight);
+}
+
 void destroyBtree(Btree * tree) {
     if(tree->left != NULL)  destroyBtree(tree->left);
     if(tree->right != NULL) destroyBtree(tree->right);

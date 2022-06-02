@@ -1,0 +1,14 @@
+Para compila el programa:
+$make main
+$./main C file.txt
+$./main D file.txt.hf
+
+Para los test
+$make testDecompressor
+$./testDecompressor
+
+$make testCompresor
+$./testCompresor
+
+$make testResources
+$./testResources
