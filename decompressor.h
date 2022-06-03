@@ -23,6 +23,6 @@ char buildText(Btree *tree, char *encodedFileText, int *index);
     Recibe nombres de archivos en los que esta el texto encodeado,
     el arbol encodeado y el nombre del archivo de salida.
 */
-int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPath);
+int decompresor(char *encodedTextPath, char *encodedTreePath, char *outputPath);
 
 #endif

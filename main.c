@@ -1,23 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "compresor.h"
+#include "compressor.h"
 #include "io.h"
 #include "decompressor.h"
-
 #include <time.h>
-
 
 int main(int argc, char **argv){
 
-    if(argc != 3) {
-        printf("Comprimir: ./main.c C 'file.txt'\n");
-        printf("Descomprimir: ./main.c D 'file.txt.hf'\n");
+    if(argc != 3 && !strcmp(argv[1], "C")) {
+        printf("Para comprimir se deben pasar los siguientes argumentos: ./main.c C 'file.txt'\n");
+        return 1;
+    }
+
+    if(argc != 3 && !strcmp(argv[1], "D")) {
+        printf("Para descomprimir se deben pasar los siguientes argumentos: ./main.c D 'file.txt.hf'\n");
         return 1;
     }
 
     if(!strcmp(argv[1], "C") && argv[2] != NULL){
-        achicatte(argv[2]);
+        compress(argv[2]);
     }
 
     if(!strcmp(argv[1], "D") && argv[2] != NULL){
@@ -39,5 +41,4 @@ int main(int argc, char **argv){
         fclose(f);
     }
     return 0;
-
 }

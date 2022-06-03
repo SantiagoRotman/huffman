@@ -27,8 +27,7 @@ Btree *readTree(char *encodedTree, int *treeIndex, int enterPosition, int *lette
 }
 
 char buildText(Btree *tree, char *encodedFileText, int *index) {
-    if(tree->left == NULL && tree->right == NULL && (*index)==0)
-        (*index)++;
+    if(tree->left == NULL && tree->right == NULL) (*index)++;
     for(;tree->left != NULL && tree->right != NULL; (*index)++) {
         if(encodedFileText[(*index)] == '0') tree = tree->left;
         else tree = tree->right;
@@ -36,14 +35,22 @@ char buildText(Btree *tree, char *encodedFileText, int *index) {
     return tree->letter;
 }
 
-int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPath) {
+void decompresor(char *encodedTextPath, char *encodedTreePath, char *outputPath) {
     int encodedTextLen = 0, encodedTreeLen = 0, enterPosition = 0, nlen = 0;
 
-    char * encodedFileText2 = readfile(encodedTextPath, &encodedTextLen);
-    char * encodedFileText = explode(encodedFileText2, encodedTextLen ,&nlen);
+    char *encodedFileText2 = readfile(encodedTextPath, &encodedTextLen);
+    if (encodedTextLen == 0) {
+        printf("ERROR: el archivo .hf esta vacio.\n");
+        return;
+    }
+    char *encodedFileText = explode(encodedFileText2, encodedTextLen ,&nlen);
     free(encodedFileText2);
 
     char *encodedTree = readfile(encodedTreePath, &encodedTreeLen);
+    if (encodedTreeLen == 0) {
+        printf("ERROR: el archivo .tree esta vacio.\n");
+        return;
+    }
     
     for (int i = 0; i < encodedTreeLen; i++) {
         if (encodedTree[i] == '\n') {
@@ -60,8 +67,8 @@ int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPat
     char *decodedText = malloc(sizeof(char)*1024);
     int textIndex = 0, textSize = 1, i=0;
 
-    for(i = 0;textIndex < nlen; i++){
-        if(i >= textSize * 1024){  
+    for(i = 0; textIndex < nlen; i++){// crea el texto desencodeado
+        if(i >= textSize * 1024){ 
             textSize++;
             decodedText = realloc(decodedText, textSize* 1024);
         }
@@ -74,6 +81,4 @@ int decompresor(char * encodedTextPath, char * encodedTreePath, char * outputPat
     writefile(outputPath, decodedText, i);
 
     free(decodedText);
-
-    return 0;
 }

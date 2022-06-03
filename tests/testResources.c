@@ -9,7 +9,7 @@ void testCreateTuple() {
     Tuple *A = createTuple();
     for (int i = 0; i < 256; i++){
         assert(A[(unsigned char)i].data == (char)i);
-        assert(A[(unsigned char)i].index == 0);
+        assert(A[(unsigned char)i].frequency == 0);
     }
 }
 

@@ -4,34 +4,36 @@
 #include <assert.h>
 #include "../io.h"
 #include "../resources.h"
-#include "../compresor.h"
+#include "../compressor.h"
 
 void testComputeFrequency() {
     Tuple *A = createTuple();
     char *text = "blabla123";
     int len = 9;
     computeFrequency(A, text, len);
-    assert(A['b'].index == 2);
-    assert(A['l'].index == 2);
-    assert(A['a'].index == 2);
-    assert(A['1'].index == 1);
-    assert(A['2'].index == 1);
-    assert(A['3'].index == 1);
+    assert(A['b'].frequency == 2);
+    assert(A['l'].frequency == 2);
+    assert(A['a'].frequency == 2);
+    assert(A['1'].frequency == 1);
+    assert(A['2'].frequency == 1);
+    assert(A['3'].frequency == 1);
+    free(A);
 }
 
 void testSortTuples() {
     Tuple *A = createTuple();
-    A['a'].index = 1;
-    A['b'].index = 2;
-    A['c'].index = 3;
+    A['a'].frequency = 1;
+    A['b'].frequency = 2;
+    A['c'].frequency = 3;
     sortTuples(A, 256);
     assert(A[0].data == 'c');
-    assert(A[0].index == 3);
+    assert(A[0].frequency == 3);
     assert(A[1].data == 'b');
-    assert(A[1].index == 2);
+    assert(A[1].frequency == 2);
     assert(A[2].data == 'a');
-    assert(A[2].index == 1);
-    assert(A[3].index == 0);
+    assert(A[2].frequency == 1);
+    assert(A[3].frequency == 0);
+    free(A);
 }
 
 void testAddInOrder() {
@@ -63,6 +65,13 @@ void testAddInOrder() {
     assert(treeList->tree == tree);
     assert(treeList->sig->tree == nTree);
     assert(treeList->sig->sig->tree == nnTree);
+    free(treeList->sig->sig);
+    free(treeList->sig);
+    free(treeList);
+    free(tree);
+    free(nTree);
+    free(nnTree);
+
 }
 
 void testJoinTrees() {
@@ -84,6 +93,7 @@ void testJoinTrees() {
     assert(joined->letter == ' ');
     assert(joined->left == tree);
     assert(joined->right == nTree);
+    destroyBtree(joined);
 }
 
 void testCreateFilteredTreeList() {
@@ -91,15 +101,20 @@ void testCreateFilteredTreeList() {
     sortTuples(A, 256);
     TreeList *filtered = createFilteredTreeList(A);
     assert(filtered == NULL);
+    free(filtered);
     
     Tuple *B = createTuple();
-    B['a'].index = 1;
+    B['a'].frequency = 1;
     sortTuples(B, 256);
     TreeList *filtered2 = createFilteredTreeList(B);
 
     assert(filtered2->sig == NULL);
     assert(filtered2->tree->weight == 1);
     assert(filtered2->tree->letter == 'a');
+    free(filtered2->tree);
+    free(filtered2);
+    free(A);
+    free(B);
 }
 
 void testCreateHuffmanTree() {
@@ -132,6 +147,8 @@ void testCreateHuffmanTree() {
     assert(Htree->letter == ' ');
     assert(Htree->left != NULL);
     assert(Htree->right != NULL);
+    destroyBtree(Htree);
+
 }
 
 void testGetLettersCode() {
@@ -159,12 +176,22 @@ void testGetLettersCode() {
 
     Btree *Htree = createHuffmanTree(treeList);
     char code[300] = "", *A[256];
+    for(int i = 0; i< 256; i++) A[i]=NULL;
 
     getLettersCode(Htree, code, A, 0);
 
     assert(!strcmp(A['a'], "00"));
     assert(!strcmp(A['b'], "01"));
     assert(!strcmp(A['c'], "1"));
+
+    for(int i = 0; i< 256; i++){
+        if(A[i]!=NULL) {
+            free(A[i]);
+        }
+    }
+
+    destroyBtree(Htree);
+
 }
 
 void testEncodeText() {
@@ -192,6 +219,9 @@ void testEncodeText() {
 
     Btree *Htree = createHuffmanTree(treeList);
     char code[300] = "", *A[256];
+    for(int i = 0; i< 256; i++) A[i]=NULL;
+    
+
 
     getLettersCode(Htree, code, A, 0);
 
@@ -199,6 +229,13 @@ void testEncodeText() {
 
     assert(encodedText != NULL);
     assert(!strcmp(encodedText, "00011"));
+    destroyBtree(Htree);
+    free(encodedText);
+    for(int i = 0; i< 256; i++){
+        if(A[i]!=NULL) {
+            free(A[i]);
+        }
+    }
 }
 
 void testEncodeTree() {
@@ -231,6 +268,8 @@ void testEncodeTree() {
     encodeTree(Htree, encodedTree, letters, &lenLetters, &lenTree);
     assert(Htree != NULL);
     assert(!strcmp(encodedTree, "00111"));
+    destroyBtree(Htree);
+
 
 }
 

@@ -16,6 +16,7 @@ void testReadTree() {
     assert(tree->left->left->letter == 'a');
     assert(tree->left->right->letter == 'b');
     assert(tree->right->letter == 'c');
+    destroyBtree(tree);
 }
 
 void testBuildText() {
@@ -34,6 +35,8 @@ void testBuildText() {
     decodedText = realloc(decodedText, sizeof(char)*(textSize+1)*1024);
     decodedText[i] = '\0';
     assert(!strcmp(decodedText, "abc"));
+    free(decodedText);
+    destroyBtree(tree);
 }
 
 int main() {
