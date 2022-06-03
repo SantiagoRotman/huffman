@@ -9,7 +9,7 @@
 */
 typedef struct tuple {
   char data;
-  int index;
+  int frequency;
 } Tuple;
 
 /*
@@ -28,7 +28,7 @@ typedef struct Tnode {
   Contiene un arbol como dato y un puntero al sig elemento de la lista.
 */
 typedef struct node {
-    Btree * tree;
+    Btree *tree;
     struct node *sig;
 } TreeList;
 
@@ -36,7 +36,7 @@ typedef struct node {
   createTuple: () -> Tuple
   Devuelve un puntero a un array de (MAX_LETTERS) cantidad de Tuples.
 */
-Tuple * createTuple() ;
+Tuple *createTuple() ;
 
 /*
   printTuples: Tuple* int-> void
@@ -56,7 +56,7 @@ void printTreeList(TreeList *A,  int toFile) ;
   destroyBtree: Btree* -> void
   Libera la memoria de los nodos de un arbol.
 */
-void destroyBtree(Btree * tree);
+void destroyBtree(Btree *tree);
 
 /*
   printBtree: Btree* -> void
@@ -69,6 +69,6 @@ void printBtree(Btree *tree);
   Devuelve un Btree* que tiene como datos el char y el int pasados
   en los parametros.
 */
-Btree *createTreeNode (char c, int i);
+Btree *createTreeNode(char c, int i);
 
 #endif
